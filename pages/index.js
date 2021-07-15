@@ -7,11 +7,6 @@ import { AlurakutMenu, AlurakutProfileSidebarMenuDefault, OrkutNostalgicIconSet 
 import pessoasData from '../data/pessoas.json'
 import comunidadesData from '../data/comunidades.json'
 
-// const Title = styled.h1`
-//   font-size: 50px;
-//   color: ${({ theme }) => theme.colors.primary};
-// `
-
 function ProfileSidebar(props) {
   return (
     <Box as="aside">
@@ -56,7 +51,7 @@ export default function Home() {
 
   return (
     <>
-      <AlurakutMenu />
+      <AlurakutMenu githubUser={user} />
       <MainGrid>
         <div className={"profileArea"} style={{gridArea:"profileArea"}}>
           <ProfileSidebar githubUser={user} />
