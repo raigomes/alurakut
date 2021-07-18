@@ -33,9 +33,9 @@ function ProfileRelationsSidebar(props) {
         {props.items.map((currentItem, index) => (
           index >= MAX_NUMBER_OF_ITEMS ? '' :
             <li key={currentItem.id}>
-              <a href={currentItem.url} target="_blank" rel="noopener noreferrer">
-                <img src={currentItem.image}></img>
-                <span>{currentItem.title}</span>
+              <a href={currentItem.html_url || currentItem.url} target="_blank" rel="noopener noreferrer">
+                <img src={currentItem.avatar_url || currentItem.image}></img>
+                <span>{currentItem.login || currentItem.title}</span>
               </a>
             </li>
         ))}
@@ -48,6 +48,15 @@ export default function Home() {
   const user = 'raigomes'
   const pessoasFavoritas = pessoasData
   const [comunidades, setComunidades] = React.useState(comunidadesData)
+  const [seguidores, setSeguidores] = React.useState([])
+  // Pegando array de dados do Github com useEffect para ser executado em cada renderização 
+  // (o segundo parâmetro indica para ser executado apenas uma vez)
+  React.useEffect(function (){
+    fetch(`https://api.github.com/users/${user}/followers`)
+      .then(response => response.json())
+      .then(items => setSeguidores(items))
+      .catch(error => console.error('[DEU RUIM]', error))
+  }, [])
 
   return (
     <>
@@ -118,6 +127,7 @@ export default function Home() {
           </Box>
         </div>
         <div className={"profileRelationsArea"} style={{gridArea:"profileRelationsArea"}}>
+          <ProfileRelationsSidebar title={"Seguidores"} items={seguidores} />
           <ProfileRelationsSidebar title={"Comunidades"} items={comunidades} />
           <ProfileRelationsSidebar title={"Pessoas da Comunidade"} items={pessoasFavoritas} />
         </div>
