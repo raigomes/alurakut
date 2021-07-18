@@ -47,7 +47,7 @@ function ProfileRelationsSidebar(props) {
 export default function Home() {
   const user = 'raigomes'
   const pessoasFavoritas = pessoasData
-  const [comunidades, setComunidades] = React.useState(comunidadesData)
+  const [comunidades, setComunidades] = React.useState([])
   const [seguidores, setSeguidores] = React.useState([])
   // Pegando array de dados do Github com useEffect para ser executado em cada renderização 
   // (o segundo parâmetro indica para ser executado apenas uma vez)
@@ -56,6 +56,28 @@ export default function Home() {
       .then(response => response.json())
       .then(items => setSeguidores(items))
       .catch(error => console.error('[DEU RUIM]', error))
+
+    fetch(`https://graphql.datocms.com/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization' : 'Bearer 956bcdeeeae1d15e5594f7e4f1d4aa',
+      },
+      body: JSON.stringify({"query": `query {
+        allCommunities {
+          id,
+          title,
+          image,
+          url,
+        }
+      }`})
+    })
+      .then(async (response) => {
+        const respostaDoDato = await response.json()
+        console.log(respostaDoDato)
+        setComunidades(respostaDoDato.data.allCommunities)
+      })
   }, [])
 
   return (
