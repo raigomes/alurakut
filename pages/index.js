@@ -5,7 +5,7 @@ import { ProfileRelationsBoxWrapper } from "../src/components/ProfileRelations"
 import { AlurakutMenu, AlurakutProfileSidebarMenuDefault, OrkutNostalgicIconSet } from "../src/lib/AluraCommons"
 
 import pessoasData from '../data/pessoas.json'
-import comunidadesData from '../data/comunidades.json'
+//import comunidadesData from '../data/comunidades.json'
 
 function ProfileSidebar(props) {
   return (
@@ -105,14 +105,22 @@ export default function Home() {
               const title = myForm.get('title')
               const image = myForm.get('image')
               const url = myForm.get('url')
+              const comunidade = {
+                title,
+                image,
+                url
+              }
               
               if(title && image) {
-                setComunidades([...comunidades, {
-                  id: new Date().toISOString(),
-                  title: title,
-                  image: image,
-                  url: url,
-                }])
+                fetch('/api/comunidades', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify(comunidade)
+                })
+                
+                setComunidades([...comunidades, comunidade])
               }
 
               myForm.set('title', '')
