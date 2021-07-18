@@ -119,13 +119,12 @@ export default function Home() {
                   },
                   body: JSON.stringify(comunidade)
                 })
-                
-                setComunidades([...comunidades, comunidade])
+                .then(async (response) => {
+                  const dados = await response.json()
+                  console.log(dados.registroCriado)
+                  setComunidades([...comunidades, dados.registroCriado])
+                })
               }
-
-              myForm.set('title', '')
-              myForm.set('image', '')
-              myForm.set('url', '')
             }}>
               <div>
                 <input 
@@ -149,7 +148,6 @@ export default function Home() {
                   aria-label="Coloque a URL da comunidade"
                 />
               </div>
-
               <button>
                 Criar comunidade
               </button>
