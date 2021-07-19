@@ -59,7 +59,8 @@ export default function Home(props) {
     fetch(`https://api.github.com/users/${user}/followers`)
       .then(response => response.json())
       .then(items => {
-        setSeguidores(items) 
+        //Fix para atualizar "seguidores" somente se o retorno for um array
+        if(Array.isArray(items)) setSeguidores(items) 
       })
       .catch(error => console.error('[DEU RUIM]', error))
 
@@ -173,17 +174,17 @@ export default function Home(props) {
 export async function getServerSideProps(context) {
   const cookies = nookies.get(context)
   const token = cookies.USER_TOKEN
-  const githubUser = jwt.decode(token).githubUser
-
+  const payload = jwt.decode(token) //JWT Token decoded
+  
   const { isAuthenticated } = await fetch('https://alurakut.vercel.app/api/auth', {
     headers: {
       Authorization: token
     }
   })
   .then((response) => response.json())
-
+  
   console.log('isAuthenticated', isAuthenticated)
-
+  
   if(!isAuthenticated) {
     return {
       redirect: {
@@ -195,7 +196,7 @@ export async function getServerSideProps(context) {
 
   return {
     props: {
-      githubUser
+      githubUser: payload.githubUser
     }, // will be passed to the page component as props
   }
 }
