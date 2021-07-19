@@ -28,7 +28,7 @@ function ProfileSidebar(props) {
 function ProfileRelationsSidebar(props) {
   const MAX_NUMBER_OF_ITEMS = 6
 
-  console.log(props.items)
+  //console.log(props.items)
 
   return (
     <ProfileRelationsBoxWrapper>
@@ -97,7 +97,7 @@ export default function Home(props) {
         <div className={"welcomeArea"} style={{gridArea:"welcomeArea"}}>
           <Box>
             <h1 className={"title"}>
-              Bem vindo(a), Raí
+              Bem vindo(a), {user}
             </h1>
 
             <OrkutNostalgicIconSet />
@@ -128,7 +128,7 @@ export default function Home(props) {
                 })
                 .then(async (response) => {
                   const dados = await response.json()
-                  console.log(dados.registroCriado)
+                  //console.log(dados.registroCriado)
                   setComunidades([...comunidades, dados.registroCriado])
                 })
               }
@@ -183,8 +183,7 @@ export async function getServerSideProps(context) {
   })
   .then((response) => response.json())
   
-  console.log('isAuthenticated', isAuthenticated)
-  
+  //console.log('isAuthenticated', isAuthenticated)
   if(!isAuthenticated) {
     return {
       redirect: {
