@@ -1,4 +1,6 @@
 import React from 'react'
+import nookies from 'nookies' //Lib de cookies
+import jwt from 'jsonwebtoken' //Lib para decodificar tokens
 import Box from "../src/components/Box"
 import MainGrid from "../src/components/MainGrid"
 import { ProfileRelationsBoxWrapper } from "../src/components/ProfileRelations"
@@ -26,6 +28,8 @@ function ProfileSidebar(props) {
 function ProfileRelationsSidebar(props) {
   const MAX_NUMBER_OF_ITEMS = 6
 
+  console.log(props.items)
+
   return (
     <ProfileRelationsBoxWrapper>
       <h2 className={"smallTitle"}>{`${props.title} (${props.items.length})`}</h2>
@@ -44,8 +48,8 @@ function ProfileRelationsSidebar(props) {
   )
 }
 
-export default function Home() {
-  const user = 'raigomes'
+export default function Home(props) {
+  const user = props.githubUser
   const pessoasFavoritas = pessoasData
   const [comunidades, setComunidades] = React.useState([])
   const [seguidores, setSeguidores] = React.useState([])
@@ -54,7 +58,9 @@ export default function Home() {
   React.useEffect(function (){
     fetch(`https://api.github.com/users/${user}/followers`)
       .then(response => response.json())
-      .then(items => setSeguidores(items))
+      .then(items => {
+        setSeguidores(items) 
+      })
       .catch(error => console.error('[DEU RUIM]', error))
 
     fetch(`https://graphql.datocms.com/`, {
@@ -162,4 +168,34 @@ export default function Home() {
       </MainGrid>
     </>
   )
+}
+
+export async function getServerSideProps(context) {
+  const cookies = nookies.get(context)
+  const token = cookies.USER_TOKEN
+  const githubUser = jwt.decode(token).githubUser
+
+  const { isAuthenticated } = await fetch('https://alurakut.vercel.app/api/auth', {
+    headers: {
+      Authorization: token
+    }
+  })
+  .then((response) => response.json())
+
+  console.log('isAuthenticated', isAuthenticated)
+
+  if(!isAuthenticated) {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      }
+    }
+  } 
+
+  return {
+    props: {
+      githubUser
+    }, // will be passed to the page component as props
+  }
 }
