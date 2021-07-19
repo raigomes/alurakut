@@ -1,4 +1,5 @@
 import React from 'react';
+import nookies from 'nookies'; //Lib de cookies
 import { useRouter } from 'next/router'; //Router do next
 
 export default function LoginScreen() {
@@ -20,7 +21,27 @@ export default function LoginScreen() {
           <form className="box" onSubmit={(e) => {
               e.preventDefault()
               console.log('Usuário: ', githubUser)
-              router.push('/')
+
+              //Consulta a api de autenticação
+              fetch('https://alurakut.vercel.app/api/login', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({githubUser})
+              })
+                .then(async (response) => {
+                  const responseData = await response.json()
+                  const token = responseData.token
+                  console.log(token)
+                  //Criando o cookie USER_TOKEN para validar a autenticação
+                  nookies.set(null, 'USER_TOKEN', token, {
+                    path: '/',
+                    maxAge: 86400 * 7
+                  })
+                  //Redirecionando para a página raiz
+                  router.push('/')
+                })
             }}>
             <p>
               Acesse agora mesmo com seu usuário do <strong>GitHub</strong>!
